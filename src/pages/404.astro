@@ -1,0 +1,83 @@
+---
+import HubLayout from '../layouts/HubLayout.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<HubLayout title={`404 · ${SITE_TITLE}`} description="页面未找到">
+	<section class="not-found">
+		<div class="nf-code">4 0 4</div>
+		<div class="nf-line"></div>
+		<h1 class="nf-title">页面走丢了</h1>
+		<p class="nf-desc">
+			你访问的页面不存在，或已被移动。让我们回到正轨。
+		</p>
+		<div class="nf-actions">
+			<a class="nf-link primary" href="/">← 返回首页</a>
+			<a class="nf-link" href="/blog/">浏览博客</a>
+		</div>
+	</section>
+</HubLayout>
+
+<style>
+	.not-found {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: 4em 1em 6em;
+	}
+	.nf-code {
+		font-size: clamp(3.5rem, 12vw, 7rem);
+		font-weight: 900;
+		letter-spacing: 12px;
+		color: var(--hub-fg);
+	}
+	.nf-line {
+		width: 80px;
+		height: 5px;
+		background: var(--hub-yellow);
+		margin: 1.5em 0;
+	}
+	.nf-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		letter-spacing: 4px;
+		color: var(--hub-yellow);
+		margin: 0 0 0.8em;
+	}
+	.nf-desc {
+		font-size: 0.95rem;
+		color: var(--hub-fg-soft);
+		letter-spacing: 1px;
+		margin: 0 0 2.5em;
+	}
+	.nf-actions {
+		display: flex;
+		gap: 1em;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+	.nf-link {
+		display: inline-block;
+		padding: 0.7em 1.4em;
+		border: 2px solid var(--hub-border);
+		background: var(--hub-card-bg);
+		color: var(--hub-fg);
+		text-decoration: none;
+		font-size: 0.9rem;
+		letter-spacing: 2px;
+		transition: all 0.3s ease;
+	}
+	.nf-link:hover {
+		border-color: var(--hub-yellow);
+		color: var(--hub-yellow);
+		transform: translateY(-3px);
+	}
+	.nf-link.primary {
+		border-color: var(--hub-yellow);
+		color: var(--hub-yellow);
+	}
+	.nf-link.primary:hover {
+		background: rgba(230, 184, 0, 0.12);
+	}
+</style>

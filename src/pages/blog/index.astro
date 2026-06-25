@@ -1,0 +1,191 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import HubLayout from '../../layouts/HubLayout.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<HubLayout title={`BLOG · ${SITE_TITLE}`} description="SIKY 的技术博客 - 技术与生活的记录">
+	<section class="blog-list">
+		<div class="list-head">
+			<h1 class="page-title">B L O G</h1>
+			<a class="tags-link" href="/tags/"># 标签</a>
+		</div>
+		<p class="page-sub">技术与生活的记录 · 共 {posts.length} 篇</p>
+
+		<ul>
+			{
+				posts.map((post) => (
+					<li>
+						<a href={`/blog/${post.id}/`}>
+							{post.data.heroImage && (
+								<div class="post-cover">
+									<Image src={post.data.heroImage} alt="" width={720} height={240} />
+								</div>
+							)}
+							<div class="post-head">
+								<h2 class="post-title">{post.data.title}</h2>
+								<span class="post-date">
+									<FormattedDate date={post.data.pubDate} />
+								</span>
+							</div>
+							{post.data.description && <p class="post-desc">{post.data.description}</p>}
+							{post.data.tags && post.data.tags.length > 0 && (
+								<div class="post-tags">
+									{post.data.tags.map((tag) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							)}
+							<span class="post-arrow">→</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</HubLayout>
+
+<style>
+	.blog-list {
+		width: 100%;
+		margin: 0 auto;
+		padding: 0;
+	}
+	.page-title {
+		font-size: 2.2rem;
+		font-weight: 900;
+		letter-spacing: 8px;
+		color: var(--hub-fg);
+		margin: 0 0 0.3em;
+	}
+	.list-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1em;
+	}
+	.tags-link {
+		font-size: 0.9rem;
+		letter-spacing: 2px;
+		color: var(--hub-blue);
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+	.tags-link:hover {
+		color: var(--hub-yellow);
+	}
+	.post-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4em;
+		margin-top: 0.8em;
+	}
+	.post-tags .tag {
+		font-size: 0.72rem;
+		letter-spacing: 1px;
+		color: var(--hub-blue);
+		padding: 0.1em 0.5em;
+		border: 1px solid rgba(0, 168, 217, 0.35);
+		border-radius: 2px;
+	}
+	.page-sub {
+		font-size: 0.9rem;
+		color: var(--hub-blue);
+		letter-spacing: 2px;
+		margin: 0 0 2.5em;
+		padding-bottom: 1em;
+		border-bottom: 2px solid var(--hub-decor);
+	}
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1.2em;
+	}
+	li a {
+		position: relative;
+		display: block;
+		padding: 1.4em 1.6em;
+		border: 2px solid var(--hub-border);
+		background: var(--hub-card-bg);
+		text-decoration: none;
+		color: var(--hub-fg);
+		transition: all 0.3s ease;
+		overflow: hidden;
+	}
+	.post-cover {
+		margin: -1.4em -1.6em 1.2em;
+		overflow: hidden;
+	}
+	.post-cover :global(img) {
+		display: block;
+		width: 100%;
+		height: 200px;
+		object-fit: cover;
+		border-bottom: 2px solid var(--hub-decor);
+	}
+	li a:hover {
+		border-color: var(--hub-yellow);
+		background: rgba(230, 184, 0, 0.1);
+		transform: translateX(6px);
+	}
+	li a:hover .post-title {
+		color: var(--hub-yellow);
+	}
+	li a:hover .post-arrow {
+		opacity: 1;
+		transform: translateY(-50%) translateX(0);
+	}
+	.post-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1em;
+	}
+	.post-title {
+		font-size: 1.25rem;
+		font-weight: 700;
+		letter-spacing: 1px;
+		margin: 0;
+		color: var(--hub-fg);
+		transition: color 0.3s ease;
+	}
+	.post-date {
+		font-size: 0.8rem;
+		color: var(--hub-blue);
+		white-space: nowrap;
+	}
+	.post-desc {
+		margin: 0.6em 0 0;
+		font-size: 0.92rem;
+		line-height: 1.6;
+		color: var(--hub-fg-soft);
+	}
+	.post-arrow {
+		position: absolute;
+		right: 1.4em;
+		top: 50%;
+		transform: translateY(-50%) translateX(-8px);
+		font-size: 1.3rem;
+		color: var(--hub-yellow);
+		opacity: 0;
+		transition: all 0.3s ease;
+	}
+	@media (max-width: 720px) {
+		.post-head {
+			flex-direction: column;
+			gap: 0.3em;
+		}
+		.post-arrow {
+			display: none;
+		}
+	}
+</style>

@@ -1,0 +1,49 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	);
+	return posts.map((post, i) => ({
+		params: { slug: post.id },
+		props: {
+			post,
+			// 列表按 pubDate 倒序：上一篇 = 更新的一篇（i-1），下一篇 = 更早的一篇（i+1）
+			prev: posts[i - 1]
+				? { id: posts[i - 1].id, title: posts[i - 1].data.title }
+				: undefined,
+			next: posts[i + 1]
+				? { id: posts[i + 1].id, title: posts[i + 1].data.title }
+				: undefined,
+		},
+	}));
+}
+type Props = {
+	post: CollectionEntry<'blog'>;
+	prev?: { id: string; title: string };
+	next?: { id: string; title: string };
+};
+
+const { post, prev, next } = Astro.props;
+const { Content, headings } = await render(post);
+
+// 阅读时长估算:中文按 300 字/分,英文按 200 词/分
+function readingTime(body: string): number {
+	const text = body
+		.replace(/```[\s\S]*?```/g, '')
+		.replace(/`[^`]*`/g, '')
+		.replace(/!\[.*?\]\(.*?\)/g, '')
+		.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+		.replace(/[#>*_~\-=]/g, '');
+	const cn = (text.match(/[一-龥]/g) ?? []).length;
+	const en = (text.match(/[a-zA-Z]+/g) ?? []).length;
+	return Math.max(1, Math.ceil(cn / 300 + en / 200));
+}
+const minutes = readingTime(post.body ?? '');
+---
+
+<BlogPost {...post.data} headings={headings} readingTime={minutes} prev={prev} next={next}>
+	<Content />
+</BlogPost>

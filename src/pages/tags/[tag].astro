@@ -1,0 +1,171 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import HubLayout from '../../layouts/HubLayout.astro';
+import { SITE_TITLE } from '../../consts';
+
+export async function getStaticPaths() {
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	);
+	const tagMap = new Map<string, number>();
+	for (const post of posts) {
+		for (const tag of post.data.tags ?? []) {
+			tagMap.set(tag, (tagMap.get(tag) ?? 0) + 1);
+		}
+	}
+	return [...tagMap.keys()].map((tag) => ({
+		params: { tag },
+		props: {
+			tag,
+			posts: posts.filter((p) => (p.data.tags ?? []).includes(tag)),
+		},
+	}));
+}
+
+type Props = {
+	tag: string;
+	posts: Awaited<ReturnType<typeof getCollection<'blog'>>>;
+};
+
+const { tag, posts } = Astro.props;
+---
+
+<HubLayout title={`#${tag} · ${SITE_TITLE}`} description={`标签 #${tag} 下的文章`}>
+	<section class="blog-list">
+		<div class="list-head">
+			<h1 class="page-title">#{tag}</h1>
+			<a class="tags-link" href="/tags/">← 全部标签</a>
+		</div>
+		<p class="page-sub">共 {posts.length} 篇文章</p>
+
+		<ul>
+			{
+				posts.map((post) => (
+					<li>
+						<a href={`/blog/${post.id}/`}>
+							<div class="post-head">
+								<h2 class="post-title">{post.data.title}</h2>
+								<span class="post-date">
+									<FormattedDate date={post.data.pubDate} />
+								</span>
+							</div>
+							{post.data.description && <p class="post-desc">{post.data.description}</p>}
+							<span class="post-arrow">→</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</HubLayout>
+
+<style>
+	.blog-list {
+		width: 100%;
+		margin: 0 auto;
+		padding: 0;
+	}
+	.list-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1em;
+	}
+	.page-title {
+		font-size: 2rem;
+		font-weight: 900;
+		letter-spacing: 4px;
+		color: var(--hub-yellow);
+		margin: 0 0 0.3em;
+	}
+	.tags-link {
+		font-size: 0.9rem;
+		letter-spacing: 2px;
+		color: var(--hub-blue);
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+	.tags-link:hover {
+		color: var(--hub-fg);
+	}
+	.page-sub {
+		font-size: 0.9rem;
+		color: var(--hub-blue);
+		letter-spacing: 2px;
+		margin: 0 0 2.5em;
+		padding-bottom: 1em;
+		border-bottom: 2px solid var(--hub-decor);
+	}
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1.2em;
+	}
+	li a {
+		position: relative;
+		display: block;
+		padding: 1.4em 1.6em;
+		border: 2px solid var(--hub-border);
+		background: var(--hub-card-bg);
+		text-decoration: none;
+		color: var(--hub-fg);
+		transition: all 0.3s ease;
+		overflow: hidden;
+	}
+	li a:hover {
+		border-color: var(--hub-yellow);
+		background: rgba(230, 184, 0, 0.1);
+		transform: translateX(6px);
+	}
+	li a:hover .post-title {
+		color: var(--hub-yellow);
+	}
+	.post-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1em;
+	}
+	.post-title {
+		font-size: 1.25rem;
+		font-weight: 700;
+		letter-spacing: 1px;
+		margin: 0;
+		color: var(--hub-fg);
+		transition: color 0.3s ease;
+	}
+	.post-date {
+		font-size: 0.8rem;
+		color: var(--hub-blue);
+		white-space: nowrap;
+	}
+	.post-desc {
+		margin: 0.6em 0 0;
+		font-size: 0.92rem;
+		line-height: 1.6;
+		color: var(--hub-fg-soft);
+	}
+	.post-arrow {
+		position: absolute;
+		right: 1.4em;
+		top: 50%;
+		transform: translateY(-50%) translateX(-8px);
+		font-size: 1.3rem;
+		color: var(--hub-yellow);
+		opacity: 0;
+		transition: all 0.3s ease;
+	}
+	@media (max-width: 720px) {
+		.post-head {
+			flex-direction: column;
+			gap: 0.3em;
+		}
+		.post-arrow {
+			display: none;
+		}
+	}
+</style>

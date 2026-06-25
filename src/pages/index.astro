@@ -1,0 +1,186 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import BgDecor from '../components/BgDecor.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+// 取最新 5 篇文章用于首页列表
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 5);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body class="hub">
+		<BgDecor />
+
+		<div class="main-content">
+			<h1 class="site-title">SIKY_HUB</h1>
+			<div class="title-line"></div>
+
+			<section class="quote-section">
+				<div class="quote-box">
+					<p id="text">载入中…</p>
+					<p id="author"></p>
+				</div>
+			</section>
+
+			{
+				/* 文章列表（首页新增） */
+				posts.length > 0 && (
+					<section class="post-list">
+						<h2 class="post-list-title">
+							<span>LATEST POSTS</span>
+							<a class="post-list-more" href="/blog/">VIEW ALL</a>
+						</h2>
+						<ul>
+							{posts.map((post) => (
+								<li>
+									<a href={`/blog/${post.id}/`}>
+										<span class="post-title">{post.data.title}</span>
+										<span class="post-date">
+											<FormattedDate date={post.data.pubDate} />
+										</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				)
+			}
+
+			<section class="post-list">
+				<h2 class="post-list-title">
+					<span>LATEST POSTS</span>
+				</h2>
+				
+				<div class="cards-row">
+					<a href="/blog/" class="card card-wide yellow">
+						<h3>B L O G</h3>
+						<p>技术与生活的记录</p>
+						<span class="arrow">→</span>
+					</a>
+					<a
+						href="https://hono-vite.siky.top"
+						target="_blank"
+						rel="noopener"
+						class="card card-narrow blue"
+					>
+						<h3>HONO + VITE</h3>
+						<p>现代框架的实践</p>
+						<span class="arrow">→</span>
+					</a>
+				</div>
+
+				<div class="lines-row">
+					<span class="line line-yellow" style="width: 55%"></span>
+					<span class="line line-white" style="width: calc(45% - 30px)"></span>
+				</div>
+
+				<div class="cards-row">
+					<div class="card card-narrow blue" data-qr-open style="cursor: pointer;">
+						<h3>QR CLOCK</h3>
+						<p>时间的另一种形态</p>
+						<span class="arrow">→</span>
+					</div>
+					<a
+						href="https://quiet-smoke.siky.top"
+						target="_blank"
+						rel="noopener"
+						class="card card-wide yellow"
+					>
+						<h3>轻 烟</h3>
+						<p>极简 Markdown 编辑器</p>
+						<span class="arrow">→</span>
+					</a>
+				</div>
+			</section>
+
+
+			<div class="bottom-decor">
+				<span class="hex-decor">0x7B 0x2E 0x48 0x55 0x42</span>
+			</div>
+		</div>
+
+		<!-- QR CLOCK 弹窗 -->
+		<div class="modal-overlay" id="qrModal">
+			<div class="modal-content">
+				<button class="modal-close" data-qr-close aria-label="关闭">×</button>
+				<img src="/qr-clock.png" alt="QR Clock" class="modal-qr" width="200" height="200" />
+				<p class="modal-text">扫码查看当前时间</p>
+			</div>
+		</div>
+
+		<script>
+			// 一言 API 轮播
+			function updateHitokoto() {
+				const textEl = document.getElementById('text');
+				const authorEl = document.getElementById('author');
+				if (!textEl || !authorEl) return;
+				fetch('https://v1.hitokoto.cn')
+					.then((res) => res.json())
+					.then((data) => {
+						const { hitokoto, from, from_who } = data;
+						textEl.style.opacity = '0';
+						authorEl.style.opacity = '0';
+						setTimeout(() => {
+							textEl.textContent = hitokoto;
+							authorEl.textContent = `—— ${from_who ? from_who : ''}「${from}」`;
+							textEl.style.opacity = '1';
+							authorEl.style.opacity = '1';
+						}, 300);
+					})
+					.catch(() => {
+						textEl.textContent = '保持热爱，奔赴山海。';
+						authorEl.textContent = '';
+					});
+			}
+
+			// View Transitions 下，每次进入首页都要重新绑定 DOM 事件并启动轮播
+			let hitokotoTimer: ReturnType<typeof setInterval> | null = null;
+			function setupHome() {
+				// 非首页：清理并跳过
+				if (!document.getElementById('text')) {
+					if (hitokotoTimer) {
+						clearInterval(hitokotoTimer);
+						hitokotoTimer = null;
+					}
+					return;
+				}
+				updateHitokoto();
+				if (hitokotoTimer) clearInterval(hitokotoTimer);
+				hitokotoTimer = setInterval(updateHitokoto, 10000);
+
+				// QR 弹窗（DOM 在 view transition 后是新的，需重新绑定）
+				const modal = document.getElementById('qrModal');
+				document.querySelectorAll('[data-qr-open]').forEach((el) => {
+					el.addEventListener('click', () => modal?.classList.add('active'));
+				});
+				document.querySelectorAll('[data-qr-close]').forEach((el) => {
+					el.addEventListener('click', () => modal?.classList.remove('active'));
+				});
+				modal?.addEventListener('click', (e) => {
+					if (e.target === modal) modal.classList.remove('active');
+				});
+			}
+
+			document.addEventListener('astro:page-load', setupHome);
+			document.addEventListener('astro:before-swap', () => {
+				if (hitokotoTimer) {
+					clearInterval(hitokotoTimer);
+					hitokotoTimer = null;
+				}
+			});
+			// ESC 关闭弹窗（仅注册一次，实时查询 modal）
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape')
+					document.getElementById('qrModal')?.classList.remove('active');
+			});
+		</script>
+	</body>
+</html>

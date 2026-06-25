@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
+import HubLayout from '../layouts/HubLayout.astro';
+---
+
+<HubLayout title="关于我 · SIKY HUB" description="关于 Siky - 一个前端工程师的个人介绍">
+	<article class="about-page">
+		<h1 class="page-title">关 于 我</h1>
+		<div class="title-line"></div>
+
+		<div class="about-hero">
+			<Image width={1020} height={420} src={AboutHeroImage} alt="" />
+		</div>
+
+		<div class="prose">
+			<p>
+				你好，我是 Siky，一名前端工程师。这里是我的个人技术博客 SIKY HUB，记录技术与生活的点滴。
+			</p>
+
+			<p>
+				我热衷于探索 Web 前沿技术，喜欢把学到的东西沉淀成文章。从框架原理到工程实践，从一个小小的
+				React Router 实现到 npm 包的发布流程，都希望能写明白、讲清楚。
+			</p>
+
+			<p>
+				除了写代码，我也会在这里分享一些生活感悟与工具实践。如果这些内容对你有帮助，那是我的荣幸。
+			</p>
+		</div>
+	</article>
+</HubLayout>
+
+<style>
+	.about-page {
+		width: 100%;
+	}
+	.page-title {
+		font-size: 2.2rem;
+		font-weight: 900;
+		letter-spacing: 8px;
+		color: var(--hub-fg);
+		margin: 0 0 0.3em;
+	}
+	.title-line {
+		width: 60px;
+		height: 4px;
+		background: var(--hub-yellow);
+		margin: 0 0 2em;
+	}
+	.about-hero {
+		margin-bottom: 2em;
+	}
+	.about-hero :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 4px;
+		border: 2px solid var(--hub-border);
+	}
+</style>

@@ -1,0 +1,259 @@
+---
+import HeaderLink from './HeaderLink.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<header>
+	<nav>
+		<h2 class="wordmark"><a href="/">{SITE_TITLE.replace(' ', '_')}</a></h2>
+		<div class="internal-links" data-nav-menu>
+			<HeaderLink href="/">HOME</HeaderLink>
+			<HeaderLink href="/blog">BLOG</HeaderLink>
+			<HeaderLink href="/about">ABOUT</HeaderLink>
+		</div>
+		<div class="social-links">
+			<button
+				class="hamburger"
+				data-hamburger
+				type="button"
+				aria-label="切换菜单"
+				aria-expanded="false"
+			>
+				<span></span><span></span><span></span>
+			</button>
+			<button
+				class="theme-toggle"
+				data-theme-toggle
+				type="button"
+				aria-label="切换明暗主题"
+				title="切换明暗主题"
+			>
+				<!-- dark 模式显示太阳(点击切到 light);light 模式显示月亮(点击切到 dark) -->
+				<svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" width="20" height="20"
+					><circle cx="12" cy="12" r="5" fill="currentColor" /><g
+						stroke="currentColor" stroke-width="2" stroke-linecap="round"
+						><line x1="12" y1="1" x2="12" y2="4" /><line x1="12" y1="20" x2="12" y2="23" />
+						<line x1="1" y1="12" x2="4" y2="12" /><line x1="20" y1="12" x2="23" y2="12" />
+						<line x1="4.2" y1="4.2" x2="6.3" y2="6.3" /><line x1="17.7" y1="17.7" x2="19.8" y2="19.8" />
+						<line x1="4.2" y1="19.8" x2="6.3" y2="17.7" /><line x1="17.7" y1="6.3" x2="19.8" y2="4.2" /></g
+					></svg
+				>
+				<svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" width="20" height="20"
+					><path
+						fill="currentColor"
+						d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"
+					/></svg
+				>
+			</button>
+			<a href="https://github.com/SikyChen" target="_blank" rel="noopener" aria-label="GitHub">
+				<svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24"
+					><path
+						fill="currentColor"
+						d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+					></path></svg
+				>
+			</a>
+		</div>
+	</nav>
+</header>
+<script>
+	// 明暗切换:View Transitions 下每次 page-load 重新绑定
+	function syncThemeIcon() {
+		const isDark = document.documentElement.dataset.theme !== 'light';
+		document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+			btn.classList.toggle('is-dark', isDark);
+		});
+	}
+	document.addEventListener('astro:page-load', () => {
+		syncThemeIcon();
+		document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const next =
+					document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+				document.documentElement.dataset.theme = next;
+				try {
+					localStorage.setItem('theme', next);
+				} catch (e) {}
+				syncThemeIcon();
+			});
+		});
+
+		// 移动端汉堡菜单
+		document.querySelectorAll('[data-hamburger]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const menu = document.querySelector('[data-nav-menu]');
+				const open = btn.classList.toggle('is-open');
+				menu?.classList.toggle('is-open', open);
+				btn.setAttribute('aria-expanded', String(open));
+			});
+		});
+	});
+</script>
+<style>
+	header {
+		position: relative;
+		z-index: 10;
+		margin: 0;
+		padding: 0 1em;
+		background: var(--hub-header-bg);
+		backdrop-filter: blur(6px);
+		border-bottom: 2px solid var(--hub-decor);
+		font-family: var(--font-mono);
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 1100px;
+		margin: 0 auto;
+	}
+	.wordmark {
+		margin: 0;
+		font-size: 1.1rem;
+		letter-spacing: 3px;
+	}
+	.wordmark a,
+	.wordmark a.active {
+		text-decoration: none;
+		color: var(--hub-fg);
+	}
+	.wordmark a:hover {
+		color: var(--hub-yellow);
+	}
+	.internal-links {
+		display: flex;
+		gap: 0.5em;
+	}
+	.internal-links :global(a) {
+		padding: 1em 0.8em;
+		color: var(--hub-fg);
+		text-decoration: none;
+		letter-spacing: 2px;
+		font-size: 0.95rem;
+		border-bottom: 3px solid transparent;
+		transition: all 0.2s ease;
+	}
+	.internal-links :global(a:hover) {
+		color: var(--hub-yellow);
+	}
+	.internal-links :global(a.active) {
+		color: var(--hub-yellow);
+		border-bottom-color: var(--hub-yellow);
+	}
+	.social-links {
+		display: flex;
+		align-items: center;
+		gap: 0.2em;
+	}
+	.social-links a {
+		display: flex;
+		color: var(--hub-fg);
+		padding: 0.6em;
+		transition: color 0.2s ease;
+	}
+	.social-links a:hover {
+		color: var(--hub-yellow);
+	}
+	.theme-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: none;
+		border: 1px solid var(--hub-border);
+		border-radius: 4px;
+		padding: 0.4em;
+		margin-right: 0.3em;
+		color: var(--hub-fg);
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+	.theme-toggle:hover {
+		color: var(--hub-yellow);
+		border-color: var(--hub-yellow);
+	}
+	/* dark 模式显示太阳,light 模式显示月亮 */
+	.theme-toggle .icon-moon {
+		display: none;
+	}
+	.theme-toggle.is-dark .icon-sun {
+		display: block;
+	}
+	.theme-toggle.is-dark .icon-moon {
+		display: none;
+	}
+	.theme-toggle:not(.is-dark) .icon-sun {
+		display: none;
+	}
+	.theme-toggle:not(.is-dark) .icon-moon {
+		display: block;
+	}
+	/* 汉堡菜单:桌面隐藏 */
+	.hamburger {
+		display: none;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5px;
+		background: none;
+		border: 1px solid var(--hub-border);
+		border-radius: 4px;
+		padding: 0.5em;
+		margin-right: 0.3em;
+		cursor: pointer;
+	}
+	.hamburger span {
+		display: block;
+		width: 18px;
+		height: 2px;
+		background: var(--hub-fg);
+		transition: all 0.3s ease;
+	}
+	.hamburger.is-open span:nth-child(1) {
+		transform: translateY(7px) rotate(45deg);
+	}
+	.hamburger.is-open span:nth-child(2) {
+		opacity: 0;
+	}
+	.hamburger.is-open span:nth-child(3) {
+		transform: translateY(-7px) rotate(-45deg);
+	}
+	@media (max-width: 720px) {
+		.wordmark {
+			font-size: 0.95rem;
+			letter-spacing: 2px;
+		}
+		.hamburger {
+			display: flex;
+		}
+		/* 移动端导航折叠为下拉面板 */
+		.internal-links {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			flex-direction: column;
+			gap: 0;
+			background: var(--hub-header-bg);
+			backdrop-filter: blur(6px);
+			border-bottom: 2px solid var(--hub-decor);
+			padding: 0 1em;
+			max-height: 0;
+			overflow: hidden;
+			transition: max-height 0.3s ease;
+		}
+		.internal-links.is-open {
+			max-height: 320px;
+		}
+		.internal-links :global(a) {
+			padding: 0.9em 0.5em;
+			font-size: 0.9rem;
+			letter-spacing: 1px;
+			border-bottom: 1px solid var(--hub-decor);
+		}
+		.internal-links :global(a:last-child) {
+			border-bottom: none;
+		}
+		.internal-links :global(a.active) {
+			border-bottom-color: var(--hub-yellow);
+		}
+	}
+</style>

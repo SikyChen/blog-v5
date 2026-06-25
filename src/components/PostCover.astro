@@ -1,0 +1,92 @@
+---
+// 文章首图缺省自动生成:内联 SVG 品牌封面(hub 风格)。
+// 用 foreignObject 渲染标题,浏览器系统字体渲染中文,无需内嵌字体/二进制依赖。
+interface Props {
+	title: string;
+	tags?: string[];
+}
+const { title, tags = [] } = Astro.props;
+
+// 标题长度自适应字号,避免过长溢出
+const len = title.length;
+const fontSize = len > 30 ? 40 : len > 18 ? 52 : 64;
+---
+
+<div class="post-cover-fallback" role="img" aria-label={title}>
+	<svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+		<rect width="1200" height="500" fill="var(--hub-bg)" />
+		<!-- 装饰几何 -->
+		<rect
+			x="1050"
+			y="60"
+			width="90"
+			height="90"
+			transform="rotate(45 1095 105)"
+			fill="none"
+			stroke="var(--hub-decor)"
+			stroke-width="4"
+		/>
+		<circle cx="120" cy="420" r="55" fill="none" stroke="var(--hub-decor)" stroke-width="4" />
+		<rect
+			x="1080"
+			y="380"
+			width="56"
+			height="56"
+			transform="rotate(45 1108 408)"
+			fill="none"
+			stroke="var(--hub-decor)"
+			stroke-width="4"
+		/>
+		<!-- wordmark -->
+		<text
+			x="80"
+			y="80"
+			fill="var(--hub-yellow)"
+			font-family="'Courier New', monospace"
+			font-size="30"
+			font-weight="700"
+			letter-spacing="6"
+		>SIKY_HUB</text>
+		<!-- 标题(foreignObject 支持自动换行 + 中文渲染) -->
+		<foreignObject x="80" y="140" width="1040" height="240">
+			<div
+				xmlns="http://www.w3.org/1999/xhtml"
+				style={`font-family:'Courier New','SF Mono',monospace;font-size:${fontSize}px;font-weight:900;color:var(--hub-fg);line-height:1.35;letter-spacing:2px;word-break:break-word;overflow-wrap:break-word;`}
+			>
+				{title}
+			</div>
+		</foreignObject>
+		<!-- 黄色装饰条 -->
+		<rect x="80" y="440" width="80" height="6" fill="var(--hub-yellow)" />
+		<!-- 首个标签 -->
+		{
+			tags.length > 0 && (
+				<text
+					x="1120"
+					y="455"
+					text-anchor="end"
+					fill="var(--hub-blue)"
+					font-family="'Courier New', monospace"
+					font-size="24"
+					letter-spacing="2"
+				>
+					#{tags[0]}
+				</text>
+			)
+		}
+	</svg>
+</div>
+
+<style>
+	.post-cover-fallback {
+		width: 100%;
+		border: 2px solid var(--hub-border);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+	.post-cover-fallback svg {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+</style>

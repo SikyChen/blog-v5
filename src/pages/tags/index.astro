@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import HubLayout from '../../layouts/HubLayout.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = await getCollection('blog');
+const tagCount = new Map<string, number>();
+for (const post of posts) {
+	for (const tag of post.data.tags ?? []) {
+		tagCount.set(tag, (tagCount.get(tag) ?? 0) + 1);
+	}
+}
+// 按文章数倒序,同频按名字
+const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const max = Math.max(1, ...tags.map(([, c]) => c));
+---
+
+<HubLayout title={`标签 · ${SITE_TITLE}`} description="所有标签">
+	<section class="tags-cloud">
+		<h1 class="page-title">T A G S</h1>
+		<p class="page-sub">共 {tags.length} 个标签 · {posts.length} 篇文章</p>
+
+		<div class="cloud">
+			{
+				tags.map(([tag, count]) => {
+					const size = 0.9 + (count / max) * 1.1;
+					return (
+						<a
+							class="tag-chip"
+							href={`/tags/${encodeURIComponent(tag)}/`}
+							style={`font-size: ${size.toFixed(2)}rem`}
+						>
+							<span class="tag-name">#{tag}</span>
+							<span class="tag-count">{count}</span>
+						</a>
+					);
+				})
+			}
+		</div>
+	</section>
+</HubLayout>
+
+<style>
+	.tags-cloud {
+		width: 100%;
+		margin: 0 auto;
+		padding: 0;
+	}
+	.page-title {
+		font-size: 2.2rem;
+		font-weight: 900;
+		letter-spacing: 8px;
+		color: var(--hub-fg);
+		margin: 0 0 0.3em;
+	}
+	.page-sub {
+		font-size: 0.9rem;
+		color: var(--hub-blue);
+		letter-spacing: 2px;
+		margin: 0 0 2.5em;
+		padding-bottom: 1em;
+		border-bottom: 2px solid var(--hub-decor);
+	}
+	.cloud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8em 0.7em;
+		align-items: center;
+	}
+	.tag-chip {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.4em;
+		padding: 0.3em 0.8em;
+		border: 1px solid var(--hub-border);
+		background: var(--hub-card-bg);
+		color: var(--hub-fg);
+		text-decoration: none;
+		letter-spacing: 1px;
+		transition: all 0.2s ease;
+	}
+	.tag-chip:hover {
+		border-color: var(--hub-yellow);
+		background: rgba(230, 184, 0, 0.12);
+		color: var(--hub-yellow);
+		transform: translateY(-3px);
+	}
+	.tag-name {
+		font-weight: 700;
+	}
+	.tag-count {
+		font-size: 0.75em;
+		color: var(--hub-blue);
+	}
+</style>
