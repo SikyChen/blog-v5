@@ -1,0 +1,66 @@
+src/pages/index.astro
+  b9e40a953921ae1b 34,37-42,59-75,77-80,82-86,88-98
+package.json
+  h_16722c6091d978 13
+src/components/BaseHead.astro
+  b9e40a953921ae1b 25,28-39
+src/styles/global.css
+  b9e40a953921ae1b 7-12,608-616,622,661,663,666-667,669,815-839
+wrangler.jsonc
+  af4c4efc367f6832 5
+src/components/Header.astro
+  b9e40a953921ae1b 67-71,73,241,248-250,256-257
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.3",
+  "base_commit_sha": "7fc7e0911620cf8e990a3736274d31be7eee29f0",
+  "prompts": {
+    "af4c4efc367f6832": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc114fa4-a4ac-4019-a5b0-fd4a81d1fbb0",
+        "model": "glm-5.2"
+      },
+      "human_author": "chensiqi <chensiqi@cvte.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 5,
+      "accepted_lines": 1,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/882d70f1ea862a634ccd0298b78191db5fdc3c3febec94404ec9e1fa179f4be4"
+    },
+    "b9e40a953921ae1b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "348b22ae-0782-41c0-9d0e-9a1449919a1b",
+        "model": "glm-5.2"
+      },
+      "human_author": "chensiqi <chensiqi@cvte.com>",
+      "messages": [],
+      "total_additions": 159,
+      "total_deletions": 132,
+      "accepted_lines": 140,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/4d1a21caf82a760091b14a06bc96631fbab9c7b6fe703eb11d1601d961377850"
+    },
+    "fbd0a7434a0e56c7": {
+      "agent_id": {
+        "tool": "known_human",
+        "id": "known_human_session",
+        "model": "unknown"
+      },
+      "human_author": "chensiqi <chensiqi@cvte.com>",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 3,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_16722c6091d978": {
+      "author": "chensiqi"
+    }
+  }
+}
