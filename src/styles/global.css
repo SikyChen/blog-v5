@@ -4,6 +4,12 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
 :root {
 	--accent: #2337ff;
 	--accent-dark: #000d8a;
@@ -599,18 +605,21 @@ hr {
 	margin-top: 40px;
 	margin-bottom: 30px;
 }
+.post-list-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1em;
+	margin-bottom: 25px;
+	padding-bottom: 12px;
+	border-bottom: 2px solid var(--hub-border);
+}
 .post-list-title {
 	font-size: 1.4rem;
 	font-weight: 900;
 	letter-spacing: 4px;
 	color: var(--hub-yellow);
-	margin-bottom: 25px;
-	padding-bottom: 12px;
-	border-bottom: 2px solid var(--hub-border);
-}
-.post-list-title::before {
-	content: '> ';
-	color: var(--hub-blue);
+	margin: 0;
 }
 .post-list ul {
 	list-style: none;
@@ -649,29 +658,15 @@ hr {
 	white-space: nowrap;
 }
 .post-list-more {
-	display: inline-block;
-	margin-top: 22px;
-	color: var(--hub-yellow);
+	color: var(--hub-blue);
 	text-decoration: none;
+	font-size: 0.85rem;
 	font-weight: 700;
 	letter-spacing: 2px;
+	white-space: nowrap;
+	transition: color 0.2s ease;
 }
-.post-list-more:hover { color: var(--hub-fg); }
-.post-list-more::after { content: ' →'; }
-
-@media (max-width: 768px) {
-	.hub .main-content { padding: 40px 20px; }
-	.hub-page { padding: 2em 20px 1em; }
-	.site-title { font-size: 3rem; letter-spacing: 6px; }
-	.quote-box { min-height: 180px; padding: 35px 30px; }
-	.quote-box #text { font-size: 1.6rem; }
-	.cards-row { flex-direction: column; gap: 20px; }
-	.card-wide, .card-narrow { flex: none; width: 100%; }
-	.lines-row { flex-direction: column; gap: 20px; }
-	.line { width: 100% !important; }
-	.card h3 { font-size: 1.4rem; }
-	.post-list li a { flex-direction: column; align-items: flex-start; gap: 6px; }
-}
+.post-list-more:hover { color: var(--hub-yellow); }
 
 /* ============================================================
    Hub 内容页（博客列表/详情/About）样式
@@ -816,4 +811,29 @@ hr {
 .hub .prose th {
 	background: var(--hub-decor);
 	color: var(--hub-yellow);
+}
+
+/* ============================================================
+   响应式(置于基础规则之后,确保同优先级下后声明胜出)
+   ============================================================ */
+@media (max-width: 880px) {
+	.cards-row { flex-direction: column; gap: 20px; }
+	.card-wide, .card-narrow { flex: none; width: 100%; }
+	.lines-row { flex-direction: column; gap: 20px; }
+	.line { width: 100% !important; }
+}
+
+@media (max-width: 768px) {
+	.hub .main-content { padding: 40px 20px; }
+	.hub-page { padding: 2em 12px 1em; }
+	.site-title { font-size: 3rem; letter-spacing: 6px; }
+	.quote-box { min-height: 180px; padding: 35px 30px; }
+	.quote-box #text { font-size: 1.6rem; }
+	.cards-row { flex-direction: column; gap: 20px; }
+	.card-wide, .card-narrow { flex: none; width: 100%; }
+	.lines-row { flex-direction: column; gap: 20px; }
+	.line { width: 100% !important; }
+	.card h3 { font-size: 1.4rem; }
+	.post-list li a { flex-direction: column; align-items: flex-start; gap: 6px; }
+	.post-list-head { flex-wrap: wrap; }
 }

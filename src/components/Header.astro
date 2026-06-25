@@ -64,7 +64,13 @@ import { SITE_TITLE } from '../consts';
 			btn.classList.toggle('is-dark', isDark);
 		});
 	}
+	// View Transition swap 后,新页面 <html> 的 data-theme 需重新应用(localStorage)
+	document.addEventListener('astro:after-swap', () => {
+		window.applyTheme?.();
+		syncThemeIcon();
+	});
 	document.addEventListener('astro:page-load', () => {
+		window.applyTheme?.();
 		syncThemeIcon();
 		document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
 			btn.addEventListener('click', () => {
@@ -232,20 +238,23 @@ import { SITE_TITLE } from '../consts';
 			right: 0;
 			flex-direction: column;
 			gap: 0;
-			background: var(--hub-header-bg);
-			backdrop-filter: blur(6px);
+			background: #0069bb;
 			border-bottom: 2px solid var(--hub-decor);
 			padding: 0 1em;
 			max-height: 0;
 			overflow: hidden;
 			transition: max-height 0.3s ease;
 		}
+		:root[data-theme='light'] .internal-links {
+			background: #d9e7f2;
+		}
 		.internal-links.is-open {
 			max-height: 320px;
 		}
 		.internal-links :global(a) {
 			padding: 0.9em 0.5em;
-			font-size: 0.9rem;
+			font-size: 0.95rem;
+			font-weight: 700;
 			letter-spacing: 1px;
 			border-bottom: 1px solid var(--hub-decor);
 		}

@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "pnpm run build && wrangler pages deploy"
+    "deploy": "pnpm run build && npx wrangler pages deploy"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",
