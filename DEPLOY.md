@@ -39,7 +39,7 @@ wrangler login
 pnpm run deploy
 ```
 
-首次部署会提示创建项目,输入项目名 `siky-blog` 即可。之后每次 `pnpm run deploy` 自动构建并上传。
+首次部署会提示创建项目,输入项目名 `blog-v5` 即可。之后每次 `pnpm run deploy` 自动构建并上传。
 
 ## 部署后验证清单
 
