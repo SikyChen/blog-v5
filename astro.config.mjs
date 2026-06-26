@@ -10,8 +10,14 @@ export default defineConfig({
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		shikiConfig: {
-			// 暗色主题,适配蓝底页面
-			theme: 'github-dark',
+			// 双主题:dark 跟随站点暗色,light 跟随亮色。
+			// defaultColor: false 禁用 Shiki 内联的 background/color,
+			// 改由 CSS 的 --hub-code-bg / --hub-fg 控制,确保明暗切换时代码块背景同步变化。
+			themes: {
+				light: 'github-light',
+				dark: 'github-dark',
+			},
+			defaultColor: false,
 			wrap: true,
 		},
 	},

@@ -91,3 +91,13 @@ git push
 - `blog_repo` 仓库 Actions → `Trigger blog-v5 rebuild` → Run workflow(手动通知 blog-v5)
 
 > 注:`blog_repo` 的 workflow 文件需 push 到 `SikyChen/blog_repo` 仓库才生效(主仓库内 `src/content/blog/.github/` 只是 submodule 工作区副本)。
+
+## 缓存策略
+
+[public/_headers](public/_headers) 配置 Cloudflare Pages 的缓存,确保文章更新后刷新即可见:
+
+- **HTML 页面**(`/*`):`max-age=0, must-revalidate` —— 不缓存,每次请求都回源验证,内容更新立即可见
+- **带 hash 的构建产物**(`/_astro/*`):`max-age=31536000, immutable` —— 一年长缓存,文件名含 hash,内容变即换名,安全
+- **RSS / sitemap**:5 分钟短缓存,平衡实时性与流量
+
+> 这解决了一个具体问题:更新文章 push 后,页面刷新不出新内容,需「清空缓存硬性重载」才可见。根因是 CF 默认缓存 HTML,`_headers` 强制 HTML 不缓存即可解决。`<meta http-equiv>` 对 CDN 无效,必须用 `_headers`。

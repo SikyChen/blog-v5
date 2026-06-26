@@ -1,0 +1,18 @@
+# Cloudflare Pages 缓存策略
+# 原则:HTML 不缓存(内容更新立即可见),带 hash 的静态资源长缓存
+
+# HTML 页面:不缓存,确保文章更新后刷新即可见
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# 带 hash 的构建产物(JS/CSS/字体):一年长缓存(文件名含 hash,内容变即换名)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# RSS / sitemap:短缓存,平衡实时性与流量
+/rss.xml
+  Cache-Control: public, max-age=300
+/sitemap-index.xml
+  Cache-Control: public, max-age=300
+/sitemap-0.xml
+  Cache-Control: public, max-age=300
