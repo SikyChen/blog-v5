@@ -1,0 +1,22 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.3",
+  "base_commit_sha": "246d101c669cd12baa808a4992714642856f9ab8",
+  "prompts": {
+    "b9e40a953921ae1b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "348b22ae-0782-41c0-9d0e-9a1449919a1b",
+        "model": "glm-5.2"
+      },
+      "human_author": "chensiqi <chensiqi@cvte.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/6665ae160bde354450504f0793eb63e9383549045791c9f89789e8f3cdcc6621"
+    }
+  }
+}
