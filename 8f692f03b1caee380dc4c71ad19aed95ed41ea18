@@ -1,0 +1,30 @@
+src/styles/global.css
+  b9e40a953921ae1b 500-511,617-622,631,836,847,850
+DEPLOY.md
+  b9e40a953921ae1b 3,5,7-8,10,59-93
+src/pages/index.astro
+  b9e40a953921ae1b 37-38,59-62,64-80,82-84,87-102,104
+.github/workflows/update-content.yml
+  b9e40a953921ae1b 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.3",
+  "base_commit_sha": "8f692f03b1caee380dc4c71ad19aed95ed41ea18",
+  "prompts": {
+    "b9e40a953921ae1b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "348b22ae-0782-41c0-9d0e-9a1449919a1b",
+        "model": "glm-5.2"
+      },
+      "human_author": "chensiqi <chensiqi@cvte.com>",
+      "messages": [],
+      "total_additions": 153,
+      "total_deletions": 63,
+      "accepted_lines": 147,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/451fefef0836a4750575dc332b7d903fc1390407dcfcf6e6d8f911fa264bea37"
+    }
+  }
+}
