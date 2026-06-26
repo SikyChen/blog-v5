@@ -1,0 +1,47 @@
+src/pages/blog/index.astro
+  51511668fd69c1ac 28
+src/styles/global.css
+  51511668fd69c1ac 774
+  b9e40a953921ae1b 780-783,785-786
+src/pages/about.astro
+  h_16722c6091d978 23
+src/components/BaseHead.astro
+  h_16722c6091d978 6
+src/components/Header.astro
+  51511668fd69c1ac 100-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.3",
+  "base_commit_sha": "356fa2b83aeae8f47dc0119718c44f180c3601ea",
+  "prompts": {
+    "51511668fd69c1ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9aba82a1-ded9-4f06-aa72-bc07fc1e353f",
+        "model": "glm-5.2"
+      },
+      "human_author": "chensiqi <chensiqi@cvte.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 5,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/f88bb59c90e62329f6db4f738161988b1c03c742ae8a147c9e05cd52081c3dde"
+    },
+    "b9e40a953921ae1b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "348b22ae-0782-41c0-9d0e-9a1449919a1b",
+        "model": "glm-5.2"
+      },
+      "human_author": "chensiqi <chensiqi@cvte.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/6747c9e33d760192c265e5259c8db866110d11bcbbc8a5280eed7d0c76db766e"
+    }
+  }
+}
