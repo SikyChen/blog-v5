@@ -1,15 +1,13 @@
 # 部署到 Cloudflare Pages
 
-本项目为 Astro 纯静态输出，部署到 Cloudflare Pages 有两种方式。推荐 **方式 A(Git 集成)**,推送即自动部署。
+本项目为 Astro 纯静态输出，部署到 Cloudflare Pages。推荐 **Git 集成**,推送 `blog-v5` 即自动部署。
 
-## 前置:推送主仓库到 GitHub
+## 仓库结构
 
-主仓库当前无 git remote,需先在 GitHub 创建仓库并推送(注意:内容仓库 `src/content/blog` 是 submodule,指向 `SikyChen/blog_repo`,需保持为公开仓库以便 CI 拉取):
+- `blog-v5` 主仓库 → `github.com/SikyChen/blog-v5`(代码 + 布局)
+- `blog_repo` 内容仓库 → `github.com/SikyChen/blog_repo`(文章 md,作为 `src/content/blog` submodule)
 
-```bash
-git remote add origin git@github.com:SikyChen/blog-v5.git
-git push -u origin main
-```
+文章内容以 submodule 管理,`blog-v5` 记录的是 `blog_repo` 的某个 commit 指针。
 
 ## 方式 A:Git 集成(推荐)
 
@@ -58,3 +56,38 @@ pnpm run deploy
 Cloudflare Pages → 项目 → Custom domains → 添加 `siky.top`(及 `www.siky.top`)。若域名已在 Cloudflare DNS 管理,会自动配置 CNAME。
 
 > 接管 siky.top 根域后,原 Hono+Vite Hub 页面将被本站替换。原 Hub 中的 QR CLOCK / 轻烟 / HONO+VITE 仍作为外链卡片指向各自子域,需确认那些子项目部署不受影响。
+
+## 内容自动部署(改 md 即发布)
+
+`blog_repo` 内容更新后自动触发 `blog-v5` 重建,通过两个 GitHub Actions 串联:
+
+```
+blog_repo push → [trigger workflow] → repository_dispatch → [update-content workflow]
+  → 更新 blog-v5 submodule 指针并 push → Cloudflare Pages 自动构建
+```
+
+### 一次性配置
+
+1. **创建 GitHub PAT**:GitHub → Settings → Developer settings → Personal access tokens (classic) → Generate new token,勾选 `repo` 权限。
+2. **两个仓库都加 Secret**:在 `blog_repo` 和 `blog-v5` 仓库的 Settings → Secrets and variables → Actions → New repository secret,名称 `BLOG_V5_PAT`,值为上一步的 token。
+3. **确认 workflow 文件已就位**:
+   - `blog_repo`:`.github/workflows/trigger-blog-v5.yml`(push 时通知 blog-v5)
+   - `blog-v5`:`.github/workflows/update-content.yml`(收到通知后更新 submodule 并 push)
+
+### 日常发文流程(全自动)
+
+```bash
+# 在 blog_repo 仓库内
+git add . && git commit -m "new post"
+git push
+# 之后自动:blog_repo → 触发 → blog-v5 更新指针 → push → Cloudflare 构建
+```
+
+无需手动操作 `blog-v5`。在 GitHub 两个仓库的 Actions 页可看到串联的运行记录。
+
+### 手动触发
+
+- `blog-v5` 仓库 Actions → `Update content submodule` → Run workflow(跳过 blog_repo,直接拉最新内容)
+- `blog_repo` 仓库 Actions → `Trigger blog-v5 rebuild` → Run workflow(手动通知 blog-v5)
+
+> 注:`blog_repo` 的 workflow 文件需 push 到 `SikyChen/blog_repo` 仓库才生效(主仓库内 `src/content/blog/.github/` 只是 submodule 工作区副本)。

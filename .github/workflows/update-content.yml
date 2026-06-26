@@ -1,0 +1,39 @@
+name: Update content submodule
+
+# 当 blog_repo 有内容更新时,自动在 blog-v5 中更新 submodule 指针并 push,
+# 从而触发 Cloudflare Pages 重新构建部署。
+# 触发方式:blog_repo 的 workflow 通过 repository_dispatch 调用本仓库。
+on:
+  repository_dispatch:
+    types: [content_updated]
+  # 也允许手动触发
+  workflow_dispatch:
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout blog-v5
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.BLOG_V5_PAT }}
+          submodules: true
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Pull latest blog_repo
+        run: git submodule update --remote src/content/blog
+
+      - name: Commit & push if changed
+        run: |
+          git add src/content/blog
+          if git diff --staged --quiet; then
+            echo "No submodule update needed."
+          else
+            git commit -m "chore(content): update blog_repo submodule"
+            git push
+            echo "Pushed submodule update, Cloudflare Pages will rebuild."
+          fi
