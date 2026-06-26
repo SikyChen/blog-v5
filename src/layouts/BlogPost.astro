@@ -39,13 +39,6 @@ const tocHeadings = (headings ?? []).filter((h) => h.depth === 2 || h.depth === 
 			<div class="post-meta">
 				<FormattedDate date={pubDate} />
 				{readingTime && <span class="meta-sep">· 约 {readingTime} 分钟</span>}
-				{
-					updatedDate && (
-						<span class="updated">
-							· 更新于 <FormattedDate date={updatedDate} />
-						</span>
-					)
-				}
 			</div>
 			{
 				tags && tags.length > 0 && (

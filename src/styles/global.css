@@ -771,24 +771,19 @@ hr {
 	background: var(--hub-code-bg);
 	border: 1px solid var(--hub-decor);
 	border-radius: 4px;
-	padding: 1.2em 1.4em;
+	padding: 1.3em 1.4em;
 	overflow-x: auto;
 	overflow-y: hidden;
 	margin: 0 0 1.4em;
 }
 /* Shiki dual theme (defaultColor:false):按站点主题切换语法高亮文字色,
-   背景统一用 --hub-code-bg(不跟随 Shiki 的 bg 变量) */
-:root[data-theme='light'] .hub .prose pre {
-	--shiki-text: var(--shiki-light);
+   背景统一用 --hub-code-bg(不跟随 Shiki 的 bg 变量)。
+   span 内联 --shiki-light / --shiki-dark,这里按 data-theme 选用对应变量作为 color。 */
+:root[data-theme='light'] .hub .prose pre span {
+	color: var(--shiki-light, var(--hub-fg));
 }
-:root[data-theme='dark'] .hub .prose pre {
-	--shiki-text: var(--shiki-dark);
-}
-.hub .prose pre code {
-	color: var(--shiki-text, var(--hub-fg));
-}
-.hub .prose pre span {
-	color: var(--shiki-text, inherit);
+:root[data-theme='dark'] .hub .prose pre span {
+	color: var(--shiki-dark, var(--hub-fg));
 }
 /* 代码块复制按钮 */
 .hub .prose pre .copy-btn {
