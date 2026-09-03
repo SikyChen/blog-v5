@@ -7,15 +7,18 @@
 
 ## ✨ 特性
 
-- **Hub 首页**：几何动画背景（菱形/圆/三角/方块漂浮）、SIKY_HUB 标题、一言 API 轮播、项目卡片入口、QR Clock 弹窗、十六进制彩蛋，附带最新文章列表
+- **Hub 首页**：几何动画背景（菱形/圆/三角/方块漂浮）、SIKY_HUB 标题、一言 API 轮播、项目卡片入口、QR Clock 弹窗、十六进制彩蛋，附带最近文章列表
 - **博客系统**：文章列表、详情页、上下篇导航、标签云 + 标签筛选页（`/tags/[tag]`）
 - **阅读体验**：浮动目录 TOC（滚动高亮）、顶部阅读进度条、回到顶部、阅读时长估算、代码块复制按钮
-- **明暗主题**：dark（默认蓝底）/ light 双主题，无闪屏切换，跨路由持久化；首页自动跟随，内页 Header 提供切换按钮
+- **明暗主题**：dark（默认蓝底）/ light 双主题，无闪屏切换，跨路由持久化；首页自动跟随系统偏好，内页 Header 提供切换按钮
 - **背景持久化**：View Transitions + `transition:persist`，路由切换时几何动画连续播放不重置
-- **首图自动生成**：无 heroImage 的文章自动渲染品牌 SVG 封面（foreignObject 渲染中文，零依赖）
-- **代码高亮**：Shiki `github-dark` 暗色主题
+- **首图自动生成**：无 `heroImage` 的文章自动渲染品牌 SVG 封面（`foreignObject` 渲染中文，零依赖）
+- **代码高亮**：Shiki 双主题（`github-light` / `github-dark`），随站点明暗切换，背景由 CSS token 统一控制
+- **缓存策略**：`_headers` 配置 HTML 协商缓存 + 静态资源长缓存，内容更新即时可见
+- **内容自动发布**：双 GitHub Action 链路，`blog_repo` 改 md 即自动重建上线
 - **SEO**：sitemap、RSS feed、Open Graph、canonical URL
 - **移动端**：汉堡菜单 + 响应式布局
+- **定制 404 页**：hub 风格的友好引导
 
 ## 🛠 技术栈
 
@@ -32,40 +35,45 @@
 ## 📁 项目结构
 
 ```text
-├── astro.config.mjs        # Astro 配置（site / Shiki / fonts）
-├── content.config.ts       # 内容集合 schema（crtime/uptime→pubDate，tags 解析）
-├── wrangler.jsonc          # Cloudflare Pages 部署配置
-├── DEPLOY.md               # 部署步骤与验证清单
-├── public/                 # 静态资源（favicon.svg, qr-clock.png）
+├── astro.config.mjs               # Astro 配置（site / Shiki 双主题 / fonts）
+├── content.config.ts             # 内容集合 schema（crtime/uptime→pubDate，tags 解析）
+├── wrangler.jsonc                # Cloudflare Pages 部署配置
+├── DEPLOY.md                     # 部署步骤、自动化链路与缓存策略
+├── .github/workflows/
+│   └── update-content.yml        # 收到 blog_repo 通知后更新 submodule 指针并 push
+├── public/
+│   ├── _headers                  # CF Pages 缓存策略（HTML 协商，_astro 长缓存）
+│   ├── favicon.svg               # 品牌 favicon（黑底白方框 + 黄角）
+│   └── qr-clock.png              # QR Clock 弹窗图
 └── src/
-    ├── assets/             # 本地图片/字体（经 astro:assets 优化）
+    ├── assets/                   # 本地图片/字体（经 astro:assets 优化）
     ├── components/
-    │   ├── BaseHead.astro      # <head> 元数据 + 无闪屏主题脚本 + ClientRouter
-    │   ├── BgDecor.astro       # 几何动画背景（transition:persist）
-    │   ├── Header.astro        # 导航 + 明暗切换 + 汉堡菜单 + GitHub
-    │   ├── Footer.astro        # 十六进制彩蛋 + 版权
-    │   ├── FormattedDate.astro # 日期本地化（zh-CN）
-    │   ├── HeaderLink.astro    # 导航项（带 active 状态）
-    │   └── PostCover.astro     # 缺省首图自动生成（SVG）
+    │   ├── BaseHead.astro         # <head> 元数据 + 无闪屏主题脚本 + ClientRouter
+    │   ├── BgDecor.astro          # 几何动画背景（transition:persist）
+    │   ├── Header.astro           # 导航 + 明暗切换 + 汉堡菜单 + GitHub
+    │   ├── Footer.astro           # 十六进制彩蛋 + 版权
+    │   ├── FormattedDate.astro    # 日期本地化（zh-CN）
+    │   ├── HeaderLink.astro       # 导航项（带 active 状态）
+    │   └── PostCover.astro        # 缺省首图自动生成（SVG）
     ├── content/
-    │   └── blog/               # ← git submodule（SikyChen/blog_repo）
-    │       └── md/*.md          # 文章 Markdown
+    │   └── blog/                  # ← git submodule（SikyChen/blog_repo）
+    │       └── md/*.md            # 文章 Markdown
     ├── layouts/
-    │   ├── HubLayout.astro     # 内页统一壳（body.hub + BgDecor + Header + Footer）
-    │   └── BlogPost.astro      # 文章详情（TOC + 进度条 + 回到顶部 + 半透明面板）
+    │   ├── HubLayout.astro        # 内页统一壳（body.hub + BgDecor + Header + Footer）
+    │   └── BlogPost.astro         # 文章详情（TOC + 进度条 + 回到顶部 + 半透明面板）
     ├── pages/
-    │   ├── index.astro         # 首页（Hub 门户 + 文章列表）
-    │   ├── about.astro         # 关于
-    │   ├── 404.astro           # 定制 404
-    │   ├── rss.xml.js          # RSS feed
+    │   ├── index.astro            # 首页（Hub 门户 + 最近文章 + 项目卡片）
+    │   ├── about.astro            # 关于
+    │   ├── 404.astro              # 定制 404
+    │   ├── rss.xml.js             # RSS feed
     │   ├── blog/
-    │   │   ├── index.astro      # 文章列表
-    │   │   └── [...slug].astro  # 文章详情（动态路由 + 上下篇 + 阅读时长）
+    │   │   ├── index.astro         # 文章列表
+    │   │   └── [...slug].astro     # 文章详情（动态路由 + 上下篇 + 阅读时长 + TOC）
     │   └── tags/
-    │       ├── index.astro      # 标签云
-    │       └── [tag].astro      # 标签筛选
-    ├── consts.ts               # SITE_TITLE / SITE_DESCRIPTION
-    └── styles/global.css       # 全局样式 + Hub 设计 token（dark/light）
+    │       ├── index.astro         # 标签云
+    │       └── [tag].astro         # 标签筛选
+    ├── consts.ts                  # SITE_TITLE / SITE_DESCRIPTION
+    └── styles/global.css          # 全局样式 + Hub 设计 token（dark/light 双主题）
 ```
 
 ## 📝 内容管理
@@ -80,7 +88,7 @@ git submodule update --init --recursive
 git submodule update --remote
 ```
 
-文章 frontmatter 为掘金导出格式，schema 会自动转换：
+文章 frontmatter 为掘金导出格式，`content.config.ts` 会自动转换：
 
 | 字段 | 说明 |
 |---|---|
@@ -101,19 +109,17 @@ git submodule update --remote
 | `pnpm run preview` | 预览构建产物 |
 | `pnpm run deploy` | 构建并部署到 Cloudflare Pages（需 `wrangler login`） |
 
-## ☁️ 部署
+## ☁️ 部署与自动化
 
-目标平台 Cloudflare Pages，两种方式：
+- **Cloudflare Pages Git 集成**：连接仓库后，push `blog-v5` 即自动构建部署
+- **缓存策略**：[`public/_headers`](public/_headers) 让 HTML 协商缓存（更新即时可见），`_astro/*` 长缓存
+- **内容自动发布**：在 `blog_repo` 改 md 并 push，两个 GitHub Action 自动串联更新 `blog-v5` submodule 指针并触发重建
 
-1. **Git 集成（推荐）**：推送仓库后在 CF 面板连接，构建命令 `pnpm run build`、输出 `dist`
-2. **wrangler CLI**：`pnpm run deploy`
-
-详细步骤与部署后验证清单见 [DEPLOY.md](DEPLOY.md)。
+详细步骤、PAT 配置与验证清单见 [DEPLOY.md](DEPLOY.md)。
 
 ## 📄 文档
 
-- [SPEC.md](SPEC.md) — 项目开发规范（目标、结构、代码风格、边界、已知问题）
-- [DEPLOY.md](DEPLOY.md) — 部署指南
+- [DEPLOY.md](DEPLOY.md) — 部署指南、内容自动化链路、缓存策略
 
 ## Credit
 
